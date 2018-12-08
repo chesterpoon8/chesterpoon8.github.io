@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Chester Poon" />
+
+<meta name="date" content="2018-11-29" />
+
+<title>Fair and Balanced</title>
+
+<script src="fair_balanced_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="fair_balanced_files/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<script src="fair_balanced_files/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<script src="fair_balanced_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="fair_balanced_files/navigation-1.1/tabsets.js"></script>
+<script src="fair_balanced_files/navigation-1.1/codefolding.js"></script>
+<link href="fair_balanced_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="fair_balanced_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="fair_balanced_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="fair_balanced_files/readthedown-0.1/readthedown.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">Fair and Balanced</h1>
+</div>
+
+
+<div id="table-of-contents">
+    <h2><a href="#content">Fair and Balanced</a></h2>
+    <div id="text-table-of-contents">
+      <ul>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#challenges">Challenges</a></li>
+      <li><a href="#data-acquisition">Data Acquisition</a></li>
+      <li><a href="#reading-in-our-data">Reading in Our Data</a></li>
+      <li><a href="#word-frequency-for-titles.-what-is-being-reported">Word Frequency for Titles. What is Being Reported?</a></li>
+      <li><a href="#tf-idf-for-article-content">TF-IDF for Article Content</a></li>
+      <li><a href="#sentiment-analysis">Sentiment Analysis</a></li>
+      <li><a href="#conclusion-next-steps">Conclusion &amp; Next Steps</a></li>
+      </ul>
+    </div>
+</div>
+
+<div id="main">
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>An interest of mine has always been to look at ways in which news media could be biased. I want to ask the question: Is there a way to measure or find patterns in how a politically left-leaning news source differs from a right-leaning news source? What are some key differences that identify a right or left-leaning news source?</p>
+<p>The scope of this project was challenging in that there are countless news sites through the internet. I have also had to address questions of legitimacy, journalistic integrity, and standards where some sites like InfoWars pass unvalidated conspiracy theories as news. To help in deciding what news sites to look at, I found a study from the University of Michigan that classifies a news source based on the left or right leaning tendencies of their reader base. <a href="https://guides.lib.umich.edu/c.php?g=637508&amp;p=4462444" class="uri">https://guides.lib.umich.edu/c.php?g=637508&amp;p=4462444</a></p>
+<p>Before I begin describing my process, I will first address the many challenges I experienced for this project.</p>
+</div>
+<div id="challenges" class="section level2">
+<h2>Challenges</h2>
+<ol style="list-style-type: decimal">
+<li>I found a news API that would allow for download of articles, but they required a payment that I could not justify for this project. Just to make sure, I checked the free content from the API. First let’s load the libraries we’ll use throughout the project.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(jsonlite)
+<span class="kw">library</span>(tidyverse)
+<span class="kw">library</span>(tidytext)
+<span class="kw">library</span>(data.table)
+<span class="kw">library</span>(SnowballC)
+<span class="kw">library</span>(stringr)
+<span class="kw">library</span>(RColorBrewer)</code></pre></div>
+<p>Below I obtained an API key from <a href="https://www.newsapi.org" class="uri">https://www.newsapi.org</a>. On looking at the data, more specifically the article content, we notice that the content is truncated.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#stores our main url in a variable</span>
+url &lt;-<span class="st"> &#39;https://newsapi.org/v2/everything?domains=npr.org&amp;&#39;</span> 
+
+all_articles &lt;-<span class="st"> </span><span class="kw">fromJSON</span>(<span class="kw">paste</span>(url, api_key, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>), <span class="dt">flatten =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">data.frame</span>()
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(all_articles<span class="op">$</span>articles.content), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Here’s a new twist on the meet-cute story. It’s not so much a boy-meets-girl situation that ends in happiness as it is a cops-meet-fugitive sort of tale that ends in jail. Last Wednesday, the Richland Police Department in Washington state posted a call-out fo… [+2312 chars]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Anne-Marie Brady says she is the victim of a year-long campaign of intimidation in her home country after publishing research critical of China. Anne-Marie Brady Scholar Anne-Marie Brady says she has experienced harassment and interference often while conduct… [+3585 chars]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+In front of Japan’s parliament on Friday, people stage a rally against the bill to allow more foreign workers into the country. Kazuhiro Nogi/AFP/Getty Images Japanese lawmakers have passed controversial legislation expanding the number of semi-skilled foreig… [+3258 chars]
+</td>
+</tr>
+</tbody>
+</table>
+<p>This prompted me to decide to do a webscrape.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>For the purpose of feasability, I only scraped from two sites and focused on their politics section.</p></li>
+<li><p>My original conservative news site was going to be Breitbart, which would have been ideal given their large reader base. Unfortunately, the amount of content that Breitbart publishes caused a few memory issues on my computer and I was not able to continue with it.</p></li>
+</ol>
+</div>
+<div id="data-acquisition" class="section level2">
+<h2>Data Acquisition</h2>
+<p>The two sites I chose based on the political leanings of their readers are <a href="https://www.nationalreview.com" class="uri">https://www.nationalreview.com</a> and <a href="https://www.npr.org" class="uri">https://www.npr.org</a>. National Review will serve as my conservative site and NPR will serve as my liberal site. To do a mass scrape of the data from each site, I utilized Python and the Selenium and BeautifulSoup4 packages. Details on the scrape as well as the code can be accessed here:</p>
+<p><a href="https://chesterpoon8.github.io/index.html" class="uri">https://chesterpoon8.github.io/index.html</a></p>
+</div>
+<div id="reading-in-our-data" class="section level2">
+<h2>Reading in Our Data</h2>
+<p>First we’ll read in our data from NPR. Just to see, let’s take a look at how many articles were pulled from each site.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">npr &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;npr.csv&#39;</span>)
+npr &lt;-<span class="st"> </span>npr <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">source =</span> <span class="st">&#39;npr&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">as.Date</span>(datepub))
+
+natrev &lt;-<span class="st"> </span><span class="kw">read_csv</span>(<span class="st">&#39;natrev.csv&#39;</span>)
+natrev &lt;-<span class="st"> </span>natrev <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">source =</span> <span class="st">&#39;national review&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">date =</span> <span class="kw">as.Date</span>(datepub))
+
+<span class="kw">count</span>(npr)</code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##       n
+##   &lt;int&gt;
+## 1   488</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">count</span>(natrev)</code></pre></div>
+<pre><code>## # A tibble: 1 x 1
+##       n
+##   &lt;int&gt;
+## 1   615</code></pre>
+<p>The scrape pulled 488 articles from NPR and 615 articles from National Review. For convenience, let’s combine the two dataframes into one.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">news &lt;-<span class="st"> </span><span class="kw">full_join</span>(npr, natrev, <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&#39;article&#39;</span>,<span class="st">&#39;datepub&#39;</span>,<span class="st">&#39;link&#39;</span>,<span class="st">&#39;title&#39;</span>,<span class="st">&#39;source&#39;</span>,<span class="st">&#39;date&#39;</span>))
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(news), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+article
+</th>
+<th style="text-align:left;">
+datepub
+</th>
+<th style="text-align:left;">
+link
+</th>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+David Greene talks to former Senate Majority Leader George Mitchell, a Democrat, about former President George H.W. Bush, a Republican. Mitchell recalls how they formed a close relationship.
+</td>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Prosecutors for special counsel Robert Mueller say former Trump national security adviser Michael Flynn has provided substantial help to investigators and deserves leniency in sentencing.By subscribing, you agree to NPR’s terms of use and privacy policy.
+</td>
+<td style="text-align:left;">
+2018-12-05 12:19:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673630919/flynn-met-with-doj-lawyers-19-times-muellers-team-says" class="uri">https://www.npr.org/2018/12/05/673630919/flynn-met-with-doj-lawyers-19-times-muellers-team-says</a>
+</td>
+<td style="text-align:left;">
+Flynn Met With DOJ Lawyers 19 Times, Mueller’s Team Says
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rachel Martin talks to Cassandra Levesque, a New Hampshire state legislator who starts her first term in office on Wednesday. Changing child marriage laws motivated her to run for office.By subscribing, you agree to NPR’s terms of use and privacy policy.
+</td>
+<td style="text-align:left;">
+2018-12-05 10:09:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673630968/19-year-old-new-hampshire-legislators-first-day" class="uri">https://www.npr.org/2018/12/05/673630968/19-year-old-new-hampshire-legislators-first-day</a>
+</td>
+<td style="text-align:left;">
+19-Year-Old Representative Is Among New Faces In New Hampshire’s House
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Steve Inskeep talks to former United Nations Ambassador Thomas Pickering about his experience working with President George H.W. Bush, who presided over a time of global change.
+</td>
+<td style="text-align:left;">
+2018-12-05 10:09:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673630940/working-with-president-george-h-w-bush-from-the-former-un-ambassadors-perspectiv" class="uri">https://www.npr.org/2018/12/05/673630940/working-with-president-george-h-w-bush-from-the-former-un-ambassadors-perspectiv</a>
+</td>
+<td style="text-align:left;">
+Former U.N. Ambassador Thomas Pickering Remembers George H.W. Bush
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FromAs Wisconsin’s Republican Gov. Scott Walker prepares to leave office, GOP lawmakers in the state are working overtime to tie the hands of Walker’s Democratic successor Tony Evers.
+</td>
+<td style="text-align:left;">
+2018-12-05 10:09:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673630933/wisconsin-vote-to-limit-power-of-incoming-governor-and-attorney-general" class="uri">https://www.npr.org/2018/12/05/673630933/wisconsin-vote-to-limit-power-of-incoming-governor-and-attorney-general</a>
+</td>
+<td style="text-align:left;">
+Wis. GOP Lawmakers Try To Limit Incoming Governor’s Power
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+FromA fraud probe into absentee ballots in North Carolina’s 9th Congressional District has delayed the certification of Republican Mark Harris. His victory over Democrat Dan McCready is in question.
+</td>
+<td style="text-align:left;">
+2018-12-05 10:09:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673630898/election-fraud-mystery-in-north-carolina" class="uri">https://www.npr.org/2018/12/05/673630898/election-fraud-mystery-in-north-carolina</a>
+</td>
+<td style="text-align:left;">
+Election Officials Suspect Fraud In N.C. Congressional Race
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="word-frequency-for-titles.-what-is-being-reported" class="section level2">
+<h2>Word Frequency for Titles. What is Being Reported?</h2>
+<p>Let’s start by seeing what topics are most frequently reported by each site. We’ll use the <code>tidytext</code> package to clean up our text data from the article titles and get a simple word frequency analysis. First let’s tidy our data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">title &lt;-<span class="st"> </span>news <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, title) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">anti_join</span>(stop_words) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co">#take out numbers  </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">str_detect</span>(word, <span class="st">&quot;^[0-9]*$&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co">#add count column</span>
+<span class="st">  </span><span class="kw">count</span>(source,word,<span class="dt">sort =</span> <span class="ot">TRUE</span>) 
+
+title<span class="op">$</span>word &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s+&quot;</span>,<span class="st">&quot;&quot;</span>,title<span class="op">$</span>word)
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(title), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+word
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+trump
+</td>
+<td style="text-align:right;">
+85
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+trump
+</td>
+<td style="text-align:right;">
+64
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+house
+</td>
+<td style="text-align:right;">
+41
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+democrats
+</td>
+<td style="text-align:right;">
+38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+judicial
+</td>
+<td style="text-align:right;">
+37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+election
+</td>
+<td style="text-align:right;">
+37
+</td>
+</tr>
+</tbody>
+</table>
+<p>Now that our data is tidy, let’s visualize what we found using <code>ggplot2</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">npr_title &lt;-<span class="st"> </span>title <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(source <span class="op">==</span><span class="st"> &#39;npr&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rank =</span> <span class="kw">dense_rank</span>(<span class="kw">desc</span>(n))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">&lt;=</span><span class="st"> </span><span class="dv">15</span>)
+
+<span class="kw">ggplot</span>(npr_title, 
+       <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(word, n),<span class="dt">y=</span>n)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Word&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="kw">aes</span>(<span class="dt">fill=</span>n)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_gradient</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&#39;NPR&#39;</span>)</code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-7-1.png" width="768" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nat_title &lt;-<span class="st"> </span>title <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(source <span class="op">==</span><span class="st"> &#39;national review&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rank =</span> <span class="kw">dense_rank</span>(<span class="kw">desc</span>(n))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">&lt;=</span><span class="st"> </span><span class="dv">15</span>)
+
+<span class="kw">ggplot</span>(nat_title, 
+       <span class="kw">aes</span>(<span class="dt">x=</span><span class="kw">reorder</span>(word, n),<span class="dt">y=</span>n)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Word&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>,<span class="kw">aes</span>(<span class="dt">fill=</span>n)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_gradient</span>(<span class="dt">low =</span> <span class="st">&#39;red&#39;</span>, <span class="dt">high =</span> <span class="st">&#39;pink&#39;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&#39;National Review&#39;</span>)</code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-7-2.png" width="768" /></p>
+<p>For both sites, Trump was a huge topic, but a closer look at the graphs reveals some key differences. It appears that NPR mostly focused on the midterm elections and the outcome of close races post-election day. In contrast, National Review also seemed to focus somewhat on the election, but appeared to have an equally heavy emphasis on immigration, the U.S. southern border and liberals.</p>
+</div>
+<div id="tf-idf-for-article-content" class="section level2">
+<h2>TF-IDF for Article Content</h2>
+<p>Now we’ll dive into the article contents. We’ll tidy our text the same way as we did with our titles.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#get each word into a row and get rid of stop words</span>
+
+news_w &lt;-<span class="st"> </span>news <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, article) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">anti_join</span>(stop_words) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co">#take out numbers  </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">str_detect</span>(word, <span class="st">&quot;^[0-9]*$&quot;</span>))
+
+news_w<span class="op">$</span>word &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;</span><span class="ch">\\</span><span class="st">s+&quot;</span>,<span class="st">&quot;&quot;</span>,news_w<span class="op">$</span>word)
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(news_w), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+datepub
+</th>
+<th style="text-align:left;">
+link
+</th>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+date
+</th>
+<th style="text-align:left;">
+word
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+david
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+greene
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+talks
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+senate
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+majority
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2018-12-05 12:26:00
+</td>
+<td style="text-align:left;">
+<a href="https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship" class="uri">https://www.npr.org/2018/12/05/673657115/mitchell-says-bush-deserves-a-lot-of-credit-for-bipartisanship</a>
+</td>
+<td style="text-align:left;">
+Mitchell Says Bush Deserves A Lot Of Credit For Bipartisanship
+</td>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+2018-12-05
+</td>
+<td style="text-align:left;">
+leader
+</td>
+</tr>
+</tbody>
+</table>
+<p>Now that our data is mostly tidy, we’ll use Term Frequency-Inverse Document Frequency (TF-IDF) to zero in on the more important key words that are unique to the National Review and NPR.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">news_tfidf &lt;-<span class="st"> </span>news_w <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(source,word,<span class="dt">sort =</span> <span class="ot">TRUE</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">bind_tf_idf</span>(word,source,n) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">arrange</span>(<span class="kw">desc</span>(tf_idf))
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(news_tfidf), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+word
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+tf
+</th>
+<th style="text-align:right;">
+idf
+</th>
+<th style="text-align:right;">
+tf_idf
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+it’s
+</td>
+<td style="text-align:right;">
+406
+</td>
+<td style="text-align:right;">
+0.0029283
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0020297
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+npr’s
+</td>
+<td style="text-align:right;">
+420
+</td>
+<td style="text-align:right;">
+0.0020847
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0014450
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+trump’s
+</td>
+<td style="text-align:right;">
+245
+</td>
+<td style="text-align:right;">
+0.0017671
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0012248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+caption
+</td>
+<td style="text-align:right;">
+291
+</td>
+<td style="text-align:right;">
+0.0014444
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0010012
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+byline
+</td>
+<td style="text-align:right;">
+231
+</td>
+<td style="text-align:right;">
+0.0011466
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0007947
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+npr
+</td>
+<td style="text-align:left;">
+archived
+</td>
+<td style="text-align:right;">
+226
+</td>
+<td style="text-align:right;">
+0.0011217
+</td>
+<td style="text-align:right;">
+0.6931472
+</td>
+<td style="text-align:right;">
+0.0007775
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">npr_tfidf &lt;-<span class="st"> </span>news_tfidf <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(source <span class="op">==</span><span class="st"> &#39;npr&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rank =</span> <span class="kw">dense_rank</span>(<span class="kw">desc</span>(tf_idf))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">&lt;=</span><span class="st"> </span><span class="dv">20</span>)
+  
+<span class="kw">ggplot</span>(npr_tfidf, <span class="kw">aes</span>(<span class="kw">reorder</span>(word,tf_idf),tf_idf)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="kw">aes</span>(<span class="dt">fill=</span>tf_idf)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&#39;Word&#39;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;NPR&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_gradient</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-10-1.png" width="768" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nat_tfidf &lt;-<span class="st"> </span>news_tfidf <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(source <span class="op">==</span><span class="st"> &#39;national review&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rank =</span> <span class="kw">dense_rank</span>(<span class="kw">desc</span>(tf_idf))) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(rank <span class="op">&lt;=</span><span class="st"> </span><span class="dv">20</span>)
+  
+<span class="kw">ggplot</span>(nat_tfidf, <span class="kw">aes</span>(<span class="kw">reorder</span>(word,tf_idf),tf_idf)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="kw">aes</span>(<span class="dt">fill=</span>tf_idf)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">xlab</span>(<span class="st">&#39;Word&#39;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">ggtitle</span>(<span class="st">&quot;National Review&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">scale_fill_gradient</span>(<span class="dt">low =</span> <span class="st">&#39;red&#39;</span>, <span class="dt">high =</span> <span class="st">&#39;pink&#39;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_flip</span>()</code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-10-2.png" width="768" /></p>
+<p>This is particularly noteable. NPR’s top words are mostly names of politicians or names and words associated with political figures, which is expected. When we look at the National Review however, we notice a clear difference. To investigate, I had to read a few articles to get a sense for why the important words for the National Review were what they were. It appears that the National Review writes articles similar to the way a person would casually speak. The articles also appear to be written in a way where the writers do not appear to be concerned with being objective, which makes sense given that the National Review advertises itself as a conservative news site. The high TF-IDF words perhaps imply that the idea of the writer is more important than an objective dissemination of the news.</p>
+</div>
+<div id="sentiment-analysis" class="section level2">
+<h2>Sentiment Analysis</h2>
+<p>We’ll now do a sentiment analysis of the text to see how each site might spin or not spin the news on a given day. From the code below, you may notice that I had to remove the word “trump” from the lexicon. “Trump” is recognized as a positive word by the <code>tidytext</code> package and leaving the word in place would give a large number of false positives in our data set.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Get just the word stem and do sentiment analysis</span>
+news_sent &lt;-<span class="st"> </span>news <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, article) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">anti_join</span>(stop_words) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co">#take out numbers  </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">str_detect</span>(word, <span class="st">&quot;^[0-9]*$&quot;</span>),
+         <span class="co">#had to remove trump as a word</span>
+         word <span class="op">!=</span><span class="st"> &#39;trump&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">inner_join</span>(<span class="kw">get_sentiments</span>(<span class="st">&quot;bing&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(source,<span class="dt">index =</span> date, sentiment) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">spread</span>(sentiment, n, <span class="dt">fill =</span> <span class="dv">0</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sentiment =</span> positive <span class="op">-</span><span class="st"> </span>negative)
+
+knitr<span class="op">::</span><span class="kw">kable</span>(<span class="kw">head</span>(news_sent), <span class="dt">format =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+source
+</th>
+<th style="text-align:left;">
+index
+</th>
+<th style="text-align:right;">
+negative
+</th>
+<th style="text-align:right;">
+positive
+</th>
+<th style="text-align:right;">
+sentiment
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-10-31
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:right;">
+121
+</td>
+<td style="text-align:right;">
+-79
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-11-01
+</td>
+<td style="text-align:right;">
+408
+</td>
+<td style="text-align:right;">
+256
+</td>
+<td style="text-align:right;">
+-152
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-11-02
+</td>
+<td style="text-align:right;">
+489
+</td>
+<td style="text-align:right;">
+313
+</td>
+<td style="text-align:right;">
+-176
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-11-03
+</td>
+<td style="text-align:right;">
+144
+</td>
+<td style="text-align:right;">
+66
+</td>
+<td style="text-align:right;">
+-78
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-11-04
+</td>
+<td style="text-align:right;">
+90
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+-37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+national review
+</td>
+<td style="text-align:left;">
+2018-11-05
+</td>
+<td style="text-align:right;">
+294
+</td>
+<td style="text-align:right;">
+218
+</td>
+<td style="text-align:right;">
+-76
+</td>
+</tr>
+</tbody>
+</table>
+<p>Now that we have our sentiment analysis applied, we can now build our visualization.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(news_sent, <span class="kw">aes</span>(index,sentiment)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="kw">aes</span>(<span class="dt">fill=</span>source)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme</span>(<span class="dt">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_grid</span>(.<span class="op">~</span>source)</code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-12-1.png" width="768" /></p>
+<p>You’ll notice a number of noticeable contrasting peaks in the data. The large positive peak for NPR is for election day likely announcing the day’s winners from the polls. National Review’s negative peaks are more difficult to assess. A deep dive into the articles on those days reveals that they report on a large variety of different topics related to politics, but infrequently about political news that occurred on that day.</p>
+<p>Since both news outlets report roughly an equal amount on Trump, I decided to do a sentiment analysis of all articles about him.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">trump_sent &lt;-<span class="st"> </span>news <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">filter</span>(title <span class="op">%like%</span><span class="st"> &#39;Trump&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">unnest_tokens</span>(word, article) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">anti_join</span>(stop_words) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="co">#take out numbers  </span>
+<span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">str_detect</span>(word, <span class="st">&quot;^[0-9]*$&quot;</span>),
+         <span class="co">#had to remove trump as a word</span>
+         word <span class="op">!=</span><span class="st"> &#39;trump&#39;</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">inner_join</span>(<span class="kw">get_sentiments</span>(<span class="st">&quot;bing&quot;</span>)) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">count</span>(source, sentiment) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">spread</span>(sentiment, n, <span class="dt">fill =</span> <span class="dv">0</span>) <span class="op">%&gt;%</span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sentiment =</span> positive <span class="op">-</span><span class="st"> </span>negative)
+
+<span class="kw">ggplot</span>(trump_sent, <span class="kw">aes</span>(source,sentiment)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&#39;identity&#39;</span>, <span class="kw">aes</span>(<span class="dt">fill=</span>source)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() </code></pre></div>
+<p><img src="fair_balanced_files/figure-html/unnamed-chunk-13-1.png" width="768" /></p>
+<p>We notice that the negative sentiment towards Trump from NPR is double that of the National Review.</p>
+</div>
+<div id="conclusion-next-steps" class="section level2">
+<h2>Conclusion &amp; Next Steps</h2>
+<p>There are clear differences between how the two sites report on the news, which varies by topic and writing style. Ideal next steps would be to gather articles from many more news sources and to find differences between each source.</p>
+</div>
+</div>
+
+
+</div>
+
+<div id="postamble" data-toggle="wy-nav-shift" class="status">
+<p class="author"><span class="glyphicon glyphicon-user"></span> Chester Poon</p>
+<p class="date"><span class="glyphicon glyphicon-calendar"></span> 11/29/2018</p>
+</div>
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
